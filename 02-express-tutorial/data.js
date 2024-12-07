@@ -1,3 +1,4 @@
+const { products, people } = require("./data");
 const products = [
   {
     id: 1,
