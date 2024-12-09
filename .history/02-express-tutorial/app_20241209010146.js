@@ -9,7 +9,7 @@ app.get('/api/v1/test', (req, res) => {
 });
 
 //Route to get a product by ID
-app.get('/api/v1/products', (req, res) => {
+app.get('/api/v1/products/', (req, res) => {
     const { products } = req.params;
     const idToFind =parseInt(req.params.productID, 10);
    
