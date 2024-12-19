@@ -1,35 +1,36 @@
 const express = require('express');
-const {products} = require('./data');
+const cookieParser = require('cookie-parser');
+//import routes
+const peopleRoutes = require('./routes/people');
+const authRoutes = require('./routes/auth.js');
+
+//import middleware
+const logger = require('./middlewares/logger');
+
+const {products } = require('./data.js');
+
 const app = express();
+//middleware
+app.use(express.urlencoded({ extended: false}));
+app.use(express.json());
+app.use(express.static("./methods-public"));
+app.use(cookieParser());
+app.use(logger);
 
-app.use(express.static("./public"));
+//route
+app.use('/api/v1/people', peopleRoutes);
+app.use('/api/v1/auth', authRoutes);
 
-app.get('/api/v1/test', (req, res) => {
-    res.json({ message: "it worked!"});
-});
+//products route
 
-//Route to get a product by ID
 app.get('/api/v1/products', (req, res) => {
-    const { products } = req.params;
-    const idToFind =parseInt(req.params.productID, 10);
-   
-    const product = products.find((p) => p.id === idToFind);
-
-    if (!product) {
-        return res.status(404).json({ error: `Product with ID ${idToFind}`})
-    }
-
-    res.json(product);
-});
-
-app.get('/api/v1/query', (req, res) => {
     const { search, limit, priceLessThan } = req.query;
     let filteredProducts = [...products];
 
     if (search) {
         filteredProducts = filteredProducts.filter((product) =>
             product.name.toLowerCase().includes(search.toLowerCase())  
-    );
+        );
     }
 
     if (priceLessThan) {
@@ -49,12 +50,18 @@ app.get('/api/v1/query', (req, res) => {
     res.json(filteredProducts);
 });
 
+
+// 404 handler
 app.use((req, res) => {
     res.status(404).send('Route not found');
     });
 
+//start server
 const PORT =3000;
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+
+
 
