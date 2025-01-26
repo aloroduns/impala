@@ -1,0 +1,13 @@
+asyncWrapper middleware function is used to simplify handling asynchronous operations and errors in route handlers
+the middleware automatically catches any error in te async function and passes it to the next middleware.
+it also helps to aviod repitive code and keep the code readable
+
+
+const getTask = asyncWrapper(async (req, res, next) => {  
+  const { id: taskID } = req.params;  
+  const task = await Task.findOne({ _id: taskID });  
+  if (!task) {  
+    return next(createCustomError(`No task found with id: ${taskID}`, 404)); 
+  }  
+  res.status(200).json({ task });  
+});  
